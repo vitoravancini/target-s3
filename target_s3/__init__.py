@@ -48,10 +48,7 @@ def create_stream_to_record_map(input, config):
             
             add_to_stream_records(stream_to_record_map, stream_name, line)
         
-        if t == 'STATE':
-            logger.info("STATEEE")
-            logger.info(json_line)
-            logger.info(config["state_file_path"])
+        if t == 'STATE' and "state_file_path" in config:
             last_state = json_line
 
     return (stream_to_record_map, last_state)
@@ -141,7 +138,7 @@ def main():
     upload_to_s3(tmp_path, config, s3)
     delete_tmp_dir(tmp_path)
 
-    if last_state is not None:
+    if last_state is not None and "state_file_path" in config:
         persist_state(last_state, config)
 
 
