@@ -42,9 +42,14 @@ def create_stream_to_record_map(input, config):
                 raise Exception(
                     "Line is missing required key 'stream': {}".format(line))
             stream_name = json_line["stream"]
+            
             if "line_date_field" in config:
                 date_field = config["line_date_field"]
                 stream_name = stream_name + DATE_TO_UPLOAD_SEP + json_line['record'][date_field]
+            
+            if "date" in config:
+                date_field = config["date"]
+                stream_name = stream_name + DATE_TO_UPLOAD_SEP + date_field
             
             add_to_stream_records(stream_to_record_map, stream_name, line)
         
@@ -81,7 +86,7 @@ def delete_tmp_dir(tmp_path):
 def upload_to_s3(tmp_path, config, s3):
     for f in os.listdir(tmp_path):
         
-        if 'line_date_field' in config:
+        if 'line_date_field' in config or 'date' in config:
             file_name = f.split(DATE_TO_UPLOAD_SEP)[0]
             upload_date = f.split(DATE_TO_UPLOAD_SEP)[1]
         else:
