@@ -44,7 +44,7 @@ def create_stream_to_record_map(input, config):
             stream_name = json_line["stream"]
             
             if "line_date_field" in config:
-                date_field = config["line_date_field"]
+                date_field = config["line_date_field"][0:10]
                 stream_name = stream_name + DATE_TO_UPLOAD_SEP + json_line['record'][date_field]
             
             if "date" in config:
@@ -95,7 +95,8 @@ def upload_to_s3(tmp_path, config, s3):
         
         s3_file_name = os.path.join(
             config['prefix'], config['client'], file_name, upload_date, file_name)
-        
+        print("S3 path")
+        print(s3_file_name)
         logger.info('Uploading to s3: ' + s3_file_name)
         s3.upload_file(tmp_path + '/' + f, config['bucket'], s3_file_name)
         logger.info('Uploaded to s3: ' + s3_file_name)
